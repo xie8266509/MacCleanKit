@@ -1,5 +1,15 @@
 # MacCleanKit
 
+![MacCleanKit Chinese interface](docs/images/maccleankit-main-zh.png)
+
+## 中文介绍
+
+MacCleanKit 是一个 macOS 原生清理与应用管理工具原型，使用 SwiftUI 和 AppKit 构建。它面向需要复核应用残留、启动项、扩展、缓存、日志、重复文件和磁盘占用的用户，强调“先展示、再确认、只移到废纸篓”的安全工作流。
+
+当前版本支持中文 / English 双语切换，包含应用程序扫描、关联文件分析、启动项禁用与恢复、系统文件区分、权限与日志页面、重复文件扫描、磁盘分析、内存状态查看、本地打包、DMG 生成和发布检查脚本。
+
+> 注意：MacCleanKit 仍是 MVP / prototype，不是生产级清理数据库。请在移动文件到废纸篓前仔细复核路径和项目来源。
+
 MacCleanKit is a native macOS cleanup and application management prototype built with SwiftUI and AppKit.
 
 The product direction references the feature set of Nektony's Mac cleanup utilities:

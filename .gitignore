@@ -1,0 +1,13 @@
+.DS_Store
+.build/
+.swiftpm/
+dist/
+Resources/AppIcon.iconset/
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.log
+*.tmp
+*.swp
+*.swo
+

@@ -1,0 +1,68 @@
+[
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.google.Chrome",
+    "displayName": "Google Chrome",
+    "paths": [
+      { "path": "~/Library/Application Support/Google/Chrome", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Chrome profiles, extensions and browsing data.", "defaultSelected": false },
+      { "path": "~/Library/Caches/Google/Chrome", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable browser cache.", "defaultSelected": true },
+      { "path": "~/Library/HTTPStorages/com.google.Chrome", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable HTTP storage cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.google.Chrome.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.microsoft.VSCode",
+    "displayName": "Visual Studio Code",
+    "paths": [
+      { "path": "~/Library/Application Support/Code", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Editor settings, extensions and state.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.microsoft.VSCode", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/Saved Application State/com.microsoft.VSCode.savedState", "category": "leftover", "recommended": true, "risk": "safe", "description": "Window restoration state.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.microsoft.VSCode.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.tinyspeck.slackmacgap",
+    "displayName": "Slack",
+    "paths": [
+      { "path": "~/Library/Application Support/Slack", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Workspace state and local Slack data.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.tinyspeck.slackmacgap", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/HTTPStorages/com.tinyspeck.slackmacgap", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable HTTP storage cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.tinyspeck.slackmacgap.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "us.zoom.xos",
+    "displayName": "Zoom",
+    "paths": [
+      { "path": "~/Library/Application Support/zoom.us", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Zoom support data and account state.", "defaultSelected": false },
+      { "path": "~/Library/Caches/us.zoom.xos", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/Logs/zoom.us", "category": "logs", "recommended": true, "risk": "safe", "description": "Diagnostic logs.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/us.zoom.xos.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.docker.docker",
+    "displayName": "Docker Desktop",
+    "paths": [
+      { "path": "~/Library/Application Support/Docker Desktop", "category": "applicationSupport", "recommended": false, "risk": "destructive", "description": "Docker Desktop state. Review before removing.", "defaultSelected": false },
+      { "path": "~/Library/Containers/com.docker.docker", "category": "container", "recommended": false, "risk": "destructive", "description": "Docker app container.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.docker.docker", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/Group Containers/group.com.docker", "category": "container", "recommended": false, "risk": "destructive", "description": "Docker shared container data.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.apple.dt.Xcode",
+    "displayName": "Xcode",
+    "paths": [
+      { "path": "~/Library/Developer/Xcode/DerivedData", "category": "developerCache", "recommended": true, "risk": "safe", "description": "Regenerable build products and indexes.", "defaultSelected": true },
+      { "path": "~/Library/Developer/Xcode/Archives", "category": "developerCache", "recommended": false, "risk": "review", "description": "App archives. Keep if you need historical builds.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.apple.dt.Xcode", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.apple.dt.Xcode.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  }
+]

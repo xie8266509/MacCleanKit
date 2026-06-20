@@ -1,0 +1,120 @@
+# MacCleanKit
+
+MacCleanKit is a native macOS cleanup and application management prototype built with SwiftUI and AppKit.
+
+The product direction references the feature set of Nektony's Mac cleanup utilities:
+
+- MacCleaner Pro: cleanup, speed-up, disk analysis, duplicates, memory tools.
+- App Cleaner & Uninstaller: complete app removal, leftover files, startup items, extensions, update overview, and app security hints.
+
+This project is not affiliated with Nektony and does not copy its branding or assets.
+
+## Current Features
+
+- Chinese / English in-app language switch.
+- Native two-pane macOS utility UI inspired by an app manager workflow.
+- Lightweight initial app scan: the app list appears quickly and fills precise bundle sizes in the background.
+- Installed app scanner for `/Applications`, `/System/Applications`, `/System/Applications/Utilities`, and `~/Applications`.
+- Per-app associated file discovery:
+  - app bundle
+  - `~/Library/Application Support`
+  - `~/Library/Caches`
+  - `~/Library/Preferences`
+  - `~/Library/Logs`
+  - `~/Library/Containers`
+  - `~/Library/Group Containers`
+  - `~/Library/HTTPStorages`
+  - `~/Library/WebKit`
+  - LaunchAgents / LaunchDaemons
+- Code signing and Gatekeeper assessment for the selected app.
+- Privacy declaration chips from `Info.plist` usage-description keys.
+- Startup item scanner for LaunchAgents and LaunchDaemons.
+- Startup items show the real referenced app/executable icon when it can be resolved.
+- Extension scanner for Safari, Chrome, Edge, Firefox profile roots, Internet Plug-Ins, PreferencePanes, QuickLook, Spotlight, Audio Plug-Ins, and system extensions.
+- Leftover scanner using Bundle ID heuristics.
+- Cleanup scanner for user caches, logs, downloads archives, screenshots, Mail downloads, Xcode DerivedData / Archives, and Trash.
+- Disk usage analyzer for common user folders and `/Applications`.
+- Duplicate finder for Desktop, Documents, and Downloads using file size plus SHA-256.
+- Memory pressure view with optional system `purge` call when available.
+- Local update overview using App Store receipts and app modification dates.
+- All destructive operations move files to Trash and require confirmation.
+- Permission status page for Full Disk Access troubleshooting.
+- First-run Full Disk Access onboarding.
+- Cancellable scan tasks with visible scan stage/progress.
+- Timeout protection for external system tools such as `du`, `codesign`, `spctl`, `launchctl`, and `purge`.
+- Deletion protection for system paths, Apple core apps, running apps, and unknown large folders.
+- File rows distinguish user locations from system-level locations before removal.
+- Persistent Trash operation log in `~/Library/Application Support/MacCleanKit`.
+- Startup item disable/restore flow with local backups and `launchctl` status hints.
+- Rule-based associated-file discovery via `Sources/MacCleanKit/Resources/RemovalRules.json`.
+- Persistent size cache in `~/Library/Application Support/MacCleanKit/size-cache.json`.
+- Duplicate auto-selection policies for keep newest, keep shortest path, and keep dominant folder.
+- Duplicate scan pipeline: size grouping, sample hash, then full SHA-256.
+- Browser extension manifest parsing for clearer names and versions where available.
+- Single-source Chinese / English localization table in code to avoid launch-time bundle lookup stalls.
+- Imagegen-based app icon source, `.icns` generation, DMG packaging, Developer ID notarization, and Sparkle appcast scaffolding scripts.
+- Launch smoke test for packaged `.app` window visibility and internal UI screenshot export.
+- User-extendable rule file at `~/Library/Application Support/MacCleanKit/RemovalRules.json`.
+
+## Run
+
+```bash
+swift run MacCleanKit
+```
+
+## Build
+
+```bash
+swift build
+```
+
+## Self Test
+
+The installed Command Line Tools environment does not provide `XCTest` or Swift Testing, so this project uses an app-level self-test:
+
+```bash
+Scripts/run-tests.sh
+```
+
+Set `SKIP_UI_SMOKE=1` when running in a headless environment.
+
+## Package `.app`
+
+```bash
+chmod +x Scripts/package-app.sh
+Scripts/package-app.sh
+```
+
+The packaged app is written to:
+
+```text
+dist/MacCleanKit.app
+dist/MacCleanKit.app.zip
+dist/MacCleanKit.dmg
+```
+
+The script uses ad-hoc signing for local testing. For distribution, use Developer ID signing and Apple notarization. See `docs/DISTRIBUTION.md`.
+
+## Release Check
+
+```bash
+Scripts/release-check.sh
+```
+
+This runs build/self-test, packages the app, verifies the `.app` can open a visible window, exports a UI screenshot, builds the DMG, and generates an appcast template.
+
+## Safety Notes
+
+- This is an MVP, not a production-grade cleaner database.
+- App leftovers are inferred from Bundle IDs and common macOS Library paths; review before deleting.
+- Built-in rules improve matching for some common apps, but they are still review-first rules.
+- Custom rules can be added in `~/Library/Application Support/MacCleanKit/RemovalRules.json`; invalid or unsafe rules are ignored.
+- Permission chips come from declared `Info.plist` usage strings, not the protected TCC database.
+- The update view does not contact vendor servers. It only distinguishes App Store apps, recently modified apps, stale apps, and manual-check candidates.
+- Sparkle auto-update is optional. It activates only when `SUFeedURL` and a public EdDSA key are supplied during packaging and the Sparkle framework is vendored/linked in a distribution build.
+- Moving active app caches or plugins can affect running apps. Quit related apps before cleaning.
+- Disk analysis is read-only.
+
+## License
+
+MacCleanKit is released under the MIT License. See `LICENSE`.

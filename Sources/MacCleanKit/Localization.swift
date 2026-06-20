@@ -1,0 +1,129 @@
+import Foundation
+
+struct Localizer {
+    let language: AppLanguage
+
+    static var allKeys: Set<String> {
+        Set(table.keys)
+    }
+
+    func callAsFunction(_ key: String) -> String {
+        guard let pair = Self.table[key] else { return key }
+        switch language {
+        case .zh: return pair.zh
+        case .en: return pair.en
+        }
+    }
+
+    func text(_ zh: String, _ en: String) -> String {
+        language == .zh ? zh : en
+    }
+
+    private static let table: [String: (zh: String, en: String)] = [
+        "app.name": ("MacCleanKit", "MacCleanKit"),
+        "app.subtitle": ("macOS 原生清理与应用管理工具", "Native macOS cleanup and app manager"),
+        "system.app": ("系统应用", "System App"),
+        "expert.mode": ("专家模式", "Expert Mode"),
+        "scan": ("扫描", "Scan"),
+        "scan.all": ("全部扫描", "Scan All"),
+        "scanning": ("扫描中", "Scanning"),
+        "cancel.scan": ("取消扫描", "Cancel Scan"),
+        "permissions": ("权限", "Access"),
+        "available": ("可访问", "Available"),
+        "limited": ("受限", "Limited"),
+        "missing": ("缺失", "Missing"),
+        "important": ("关键", "Important"),
+        "open.full.disk.access": ("打开完全磁盘访问设置", "Open Full Disk Access Settings"),
+        "refresh.permissions": ("刷新权限", "Refresh Access"),
+        "operation.log": ("操作日志", "Operation Log"),
+        "clear.log": ("清空日志", "Clear Log"),
+        "open.support.folder": ("打开支持目录", "Open Support Folder"),
+        "export.diagnostics": ("导出诊断", "Export Diagnostics"),
+        "trash.confirm.review": ("移动前复核", "Review Before Moving"),
+        "disable.startup": ("禁用启动项", "Disable Startup Items"),
+        "restore.startup": ("恢复启动项", "Restore Startup Items"),
+        "disabled.startup": ("已禁用启动项", "Disabled Startup Items"),
+        "duplicate.policy": ("保留策略", "Keep Policy"),
+        "auto.select": ("自动选择", "Auto Select"),
+        "file.sort": ("文件排序", "File Sort"),
+        "rules": ("规则库", "Rule Library"),
+        "distribution": ("分发", "Distribution"),
+        "search": ("搜索", "Search"),
+        "sort.name": ("名称", "Name"),
+        "sort.size": ("大小", "Size"),
+        "sort.date": ("日期", "Date"),
+        "remove": ("移除", "Remove"),
+        "move.trash": ("移到废纸篓", "Move to Trash"),
+        "open.finder": ("在 Finder 中显示", "Reveal in Finder"),
+        "select.all": ("全选", "Select All"),
+        "clear": ("清空选择", "Clear"),
+        "recommended": ("建议", "Suggested"),
+        "not.selected": ("未选择项目", "No items selected"),
+        "confirm.title": ("确认移动到废纸篓", "Confirm Move to Trash"),
+        "confirm.message": ("将移动所选项目到废纸篓。请先确认列表里没有仍需要的文件。", "Selected items will be moved to Trash. Review the list before continuing."),
+        "cancel": ("取消", "Cancel"),
+        "confirm": ("确认", "Confirm"),
+        "selected": ("已选", "Selected"),
+        "items": ("项", "items"),
+        "total": ("总计", "Total"),
+        "path": ("路径", "Path"),
+        "version": ("版本", "Version"),
+        "bundle.id": ("Bundle ID", "Bundle ID"),
+        "modified": ("修改日期", "Modified"),
+        "size": ("大小", "Size"),
+        "developer": ("开发者", "Developer"),
+        "app.store": ("App Store", "App Store"),
+        "privacy": ("隐私声明", "Privacy Declarations"),
+        "security": ("签名验证", "Code Signing"),
+        "gatekeeper": ("Gatekeeper", "Gatekeeper"),
+        "associated.files": ("关联文件和文件夹", "Associated Files and Folders"),
+        "include.app": ("包含应用本体", "Include app bundle"),
+        "no.apps": ("未找到应用程序", "No applications found"),
+        "no.files": ("暂无文件", "No files yet"),
+        "no.privacy": ("未在 Info.plist 声明敏感权限", "No sensitive usage keys declared in Info.plist"),
+        "app.detail.hint": ("选择一个应用查看支持文件、缓存、偏好设置和容器。", "Select an app to inspect support files, caches, preferences, and containers."),
+        "scan.apps": ("扫描应用", "Scan Apps"),
+        "scan.section": ("扫描当前模块", "Scan Section"),
+        "cleanup.warning": ("清理项按路径启发式列出；移动前请确认项目不属于正在运行的应用。", "Cleanup items are path-based suggestions; confirm they are not needed by running apps."),
+        "leftover.warning": ("残留判断基于 Bundle ID 和常见目录，可能需要人工确认。", "Leftovers are inferred from Bundle IDs and common folders; manual review is required."),
+        "startup.warning": ("禁用启动项通常等同于移走对应 plist，请先确认来源。", "Disabling startup items usually means moving the plist; confirm the source first."),
+        "extensions.warning": ("扩展、插件和 Preference Panes 可能被系统或专业软件依赖。", "Extensions, plugins, and preference panes may be required by the system or pro apps."),
+        "disk.warning": ("磁盘分析只展示占用，不会删除任何内容。", "Disk analysis is read-only."),
+        "duplicates.warning": ("重复文件按大小和 SHA-256 哈希匹配；默认不自动选择删除。", "Duplicates are matched by size and SHA-256; nothing is selected automatically."),
+        "memory.warning": ("内存释放会调用系统 purge（如果可用），不会删除文件。", "Memory purge calls the system purge command when available and does not delete files."),
+        "updates.warning": ("更新状态基于 App Store 收据和最近修改日期，不会联网查询厂商版本。", "Update status uses App Store receipts and modified dates; no vendor version lookup is performed."),
+        "scan.duplicates": ("扫描重复文件", "Scan Duplicates"),
+        "duplicate.group": ("重复组", "Duplicate Group"),
+        "reclaimable": ("可回收", "Reclaimable"),
+        "disk.map": ("磁盘占用", "Disk Usage"),
+        "largest.locations": ("最大位置", "Largest Locations"),
+        "memory.pressure": ("内存压力", "Memory Pressure"),
+        "used.memory": ("已用内存", "Used Memory"),
+        "free.memory": ("可用内存", "Free Memory"),
+        "inactive.memory": ("非活跃内存", "Inactive Memory"),
+        "wired.memory": ("联动内存", "Wired Memory"),
+        "compressed.memory": ("压缩内存", "Compressed Memory"),
+        "purge.memory": ("释放可回收内存", "Purge Reclaimable Memory"),
+        "open.appstore.updates": ("打开 App Store 更新页", "Open App Store Updates"),
+        "last.message.ready": ("准备就绪", "Ready"),
+        "last.message.moved": ("已移动到废纸篓", "Moved to Trash"),
+        "last.message.diagnostic.exported": ("诊断报告已导出", "Diagnostic report exported"),
+        "last.message.disabled.startup": ("启动项已备份并禁用", "Startup items backed up and disabled"),
+        "last.message.restored.startup": ("启动项已恢复", "Startup items restored"),
+        "last.message.failed": ("操作失败", "Action failed"),
+        "last.message.no.purge": ("系统未提供 purge 命令", "System purge command is unavailable"),
+        "last.message.purged": ("已请求释放内存", "Memory purge requested"),
+        "scanning.apps": ("正在扫描应用程序...", "Scanning applications..."),
+        "scanning.associated": ("正在分析关联文件...", "Inspecting associated files..."),
+        "scanning.section": ("正在扫描模块...", "Scanning section..."),
+        "scanning.cancelled": ("扫描已取消", "Scan cancelled"),
+        "permission.note": ("权限 chips 来自应用 Info.plist 的用途声明，不代表当前 TCC 授权状态。", "Permission chips come from Info.plist usage descriptions and do not reflect current TCC grants."),
+        "safe.mode": ("所有删除操作都会进入废纸篓，并保留 Finder 复核路径。", "All destructive actions move items to Trash and keep Finder review available."),
+        "full.disk.access.hint": ("如果 Mail、Safari、浏览器数据或用户 Library 显示受限，请在系统设置里为 MacCleanKit 开启完全磁盘访问。", "If Mail, Safari, browser data, or the user Library is limited, grant Full Disk Access to MacCleanKit in System Settings."),
+        "distribution.hint": ("本地包已支持运行时签名选项。Developer ID 签名、公证和 Sparkle appcast 需要真实证书与 notarytool profile。", "Local packaging supports hardened runtime signing options. Developer ID signing, notarization, and Sparkle appcasts require a real certificate and notarytool profile."),
+        "permission.onboarding.title": ("开启完全磁盘访问", "Enable Full Disk Access"),
+        "permission.onboarding.body": ("MacCleanKit 需要读取用户 Library、浏览器和 Mail 数据才能完整显示可清理项目。没有权限时仍可使用基础扫描，但结果会不完整。", "MacCleanKit needs access to the user Library, browser data, and Mail data to show complete cleanup results. Basic scanning still works without it, but results will be incomplete."),
+        "skip": ("跳过", "Skip"),
+        "retest": ("重新检测", "Retest")
+    ]
+}

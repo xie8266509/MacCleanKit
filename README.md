@@ -125,6 +125,10 @@ This runs build/self-test, packages the app, verifies the `.app` can open a visi
 - Moving active app caches or plugins can affect running apps. Quit related apps before cleaning.
 - Disk analysis is read-only.
 
+## 致谢
+
+感谢 [linux.do](https://linux.do/) 社区的讨论、反馈和支持。
+
 ## License
 
 MacCleanKit is released under the MIT License. See `LICENSE`.

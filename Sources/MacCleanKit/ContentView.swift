@@ -62,8 +62,7 @@ struct ContentView: View {
 
 private enum AppTheme {
     static let windowBackground = Color(nsColor: .windowBackgroundColor)
-    static let underPageBackground = Color(nsColor: .underPageBackgroundColor)
-    static let panel = Color(nsColor: .controlBackgroundColor)
+    static let elevatedPanel = Color(nsColor: .textBackgroundColor)
     static let inset = Color(nsColor: .textBackgroundColor)
     static let line = Color(nsColor: .separatorColor)
     static let primary = Color(nsColor: .controlAccentColor)
@@ -174,7 +173,7 @@ private struct TopToolbar: View {
             if store.isScanning || store.isMoving {
                 if let fraction = store.scanProgress.fraction {
                     ProgressView(value: fraction)
-                        .frame(width: 78)
+                        .frame(width: 86)
                         .controlSize(.small)
                 } else {
                     ProgressView()
@@ -182,11 +181,12 @@ private struct TopToolbar: View {
                 }
             }
 
-            Text(store.statusMessage)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(store.lastErrorMessage == nil ? .secondary : AppTheme.danger)
-                .lineLimit(1)
-                .frame(maxWidth: 230, alignment: .trailing)
+            StatusBadge(
+                text: store.statusMessage,
+                isBusy: store.isScanning || store.isMoving,
+                isError: store.lastErrorMessage != nil
+            )
+            .frame(maxWidth: 250, alignment: .trailing)
 
             Picker("", selection: $store.language) {
                 ForEach(AppLanguage.allCases) { language in
@@ -195,6 +195,7 @@ private struct TopToolbar: View {
             }
             .pickerStyle(.segmented)
             .frame(width: 154)
+            .controlSize(.small)
 
             Toggle(l("expert.mode"), isOn: $store.expertMode)
                 .toggleStyle(.switch)
@@ -206,6 +207,7 @@ private struct TopToolbar: View {
                 Label(store.isScanning ? l("scanning") : l("scan"), systemImage: "arrow.clockwise")
             }
             .buttonStyle(.borderedProminent)
+            .controlSize(.small)
             .disabled(store.isScanning || store.isMoving)
 
             if store.isScanning {
@@ -215,6 +217,7 @@ private struct TopToolbar: View {
                     Image(systemName: "xmark.circle")
                 }
                 .buttonStyle(.bordered)
+                .controlSize(.small)
                 .help(l("cancel.scan"))
             }
         }
@@ -225,6 +228,40 @@ private struct TopToolbar: View {
             VisualEffectBackground(material: .headerView, blendingMode: .withinWindow)
                 .ignoresSafeArea()
         )
+    }
+}
+
+private struct StatusBadge: View {
+    let text: String
+    let isBusy: Bool
+    let isError: Bool
+
+    private var color: Color {
+        if isError { return AppTheme.danger }
+        if isBusy { return AppTheme.primary }
+        return AppTheme.accent
+    }
+
+    private var iconName: String {
+        if isError { return "exclamationmark.triangle.fill" }
+        if isBusy { return "arrow.triangle.2.circlepath" }
+        return "checkmark.circle.fill"
+    }
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: iconName)
+                .font(.system(size: 11, weight: .semibold))
+            Text(text)
+                .font(.system(size: 11, weight: .medium))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .foregroundStyle(color)
+        .padding(.horizontal, 10)
+        .frame(height: 26)
+        .background(Capsule().fill(color.opacity(0.10)))
+        .overlay(Capsule().stroke(color.opacity(0.20), lineWidth: 1))
     }
 }
 
@@ -272,26 +309,27 @@ private struct ApplicationManagerView: View {
 
         HStack(spacing: 0) {
             VStack(spacing: 12) {
-                HStack(spacing: 10) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundStyle(.secondary)
-                    TextField(l("search"), text: $searchText)
-                        .textFieldStyle(.plain)
-                }
-                .padding(.horizontal, 12)
-                .frame(height: 34)
-                .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.controlFill.opacity(0.65)))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppTheme.line.opacity(0.45), lineWidth: 1))
+                SearchField(text: $searchText, placeholder: l("search"))
 
-                Picker("", selection: $sort) {
-                    ForEach(AppSort.allCases) { sort in
-                        Text(sort.title(l)).tag(sort)
+                HStack(spacing: 10) {
+                    Picker("", selection: $sort) {
+                        ForEach(AppSort.allCases) { sort in
+                            Text(sort.title(l)).tag(sort)
+                        }
                     }
+                    .pickerStyle(.segmented)
+                    .frame(width: 224)
+
+                    Spacer(minLength: 8)
+
+                    Text("\(filteredApps.count) \(l("items"))")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
-                .pickerStyle(.segmented)
 
                 ScrollView {
-                    LazyVStack(spacing: 8) {
+                    LazyVStack(spacing: 7) {
                         if filteredApps.isEmpty {
                             EmptyStateView(text: l("no.apps"), systemImage: "app.dashed")
                                 .padding(.top, 40)
@@ -312,7 +350,10 @@ private struct ApplicationManagerView: View {
             }
             .padding(16)
             .frame(width: 384)
-            .background(AppTheme.underPageBackground)
+            .background(
+                VisualEffectBackground(material: .contentBackground, blendingMode: .withinWindow)
+                    .ignoresSafeArea()
+            )
 
             Divider()
 
@@ -326,6 +367,38 @@ private struct ApplicationManagerView: View {
     }
 }
 
+private struct SearchField: View {
+    @Binding var text: String
+    let placeholder: String
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
+
+            TextField(placeholder, text: $text)
+                .textFieldStyle(.plain)
+                .font(.system(size: 13))
+
+            if !text.isEmpty {
+                Button {
+                    text = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 11)
+        .frame(height: 34)
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.elevatedPanel.opacity(0.88)))
+        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(AppTheme.line.opacity(0.42), lineWidth: 1))
+    }
+}
+
 private struct AppListRow: View {
     let app: InstalledApp
     let language: AppLanguage
@@ -333,15 +406,25 @@ private struct AppListRow: View {
     var action: () -> Void
 
     var body: some View {
+        let l = Localizer(language: language)
+
         Button(action: action) {
             HStack(spacing: 12) {
                 AppIconView(url: app.url, size: 36)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(app.name)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(isSelected ? Color.white : AppTheme.label)
-                        .lineLimit(1)
+                    HStack(spacing: 6) {
+                        Text(app.name)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(isSelected ? Color.white : AppTheme.label)
+                            .lineLimit(1)
+                        if app.isAppleCoreApp {
+                            Image(systemName: "desktopcomputer")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(isSelected ? Color.white.opacity(0.72) : AppTheme.secondaryLabel.opacity(0.70))
+                                .help(l("system.app"))
+                        }
+                    }
                     Text(app.modifiedAt.map { DateFormatter.cleanerShort.string(from: $0) } ?? "-")
                         .font(.system(size: 11))
                         .foregroundStyle(isSelected ? Color.white.opacity(0.72) : AppTheme.secondaryLabel)
@@ -354,11 +437,15 @@ private struct AppListRow: View {
                     .foregroundStyle(isSelected ? Color.white.opacity(0.82) : AppTheme.secondaryLabel)
             }
             .padding(.horizontal, 12)
-            .frame(height: 52)
+            .frame(height: 54)
             .contentShape(Rectangle())
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(isSelected ? AppTheme.selectedRow : Color.clear)
+                    .fill(isSelected ? AppTheme.selectedRow : AppTheme.elevatedPanel.opacity(0.76))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(isSelected ? Color.clear : AppTheme.line.opacity(0.42), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -377,6 +464,13 @@ private struct AppDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     AppDetailHeader(store: store, app: app)
+
+                    DetailSummaryStrip(
+                        itemCount: store.associatedFiles.count,
+                        selectedCount: store.selectedTrashItems.count,
+                        selectedSize: store.selectedTrashSize,
+                        language: store.language
+                    )
 
                     InfoBanner(
                         icon: "lock.shield",
@@ -407,6 +501,73 @@ private struct AppDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppTheme.windowBackground)
+    }
+}
+
+private struct DetailSummaryStrip: View {
+    let itemCount: Int
+    let selectedCount: Int
+    let selectedSize: Int64
+    let language: AppLanguage
+
+    var body: some View {
+        let l = Localizer(language: language)
+        HStack(spacing: 10) {
+            SummaryTile(
+                title: l("associated.files"),
+                value: "\(itemCount)",
+                systemImage: "folder.badge.gearshape",
+                color: AppTheme.primary
+            )
+            SummaryTile(
+                title: l("selected"),
+                value: "\(selectedCount)",
+                systemImage: "checkmark.square",
+                color: AppTheme.accent
+            )
+            SummaryTile(
+                title: l("reclaimable"),
+                value: selectedSize.cleanerFileSize,
+                systemImage: "trash",
+                color: selectedCount > 0 ? AppTheme.danger : AppTheme.secondaryLabel
+            )
+        }
+    }
+}
+
+private struct SummaryTile: View {
+    let title: String
+    let value: String
+    let systemImage: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: systemImage)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(color)
+                .frame(width: 24, height: 24)
+                .background(Circle().fill(color.opacity(0.10)))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .frame(maxWidth: .infinity, minHeight: 56)
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.elevatedPanel))
+        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(AppTheme.line.opacity(0.45), lineWidth: 1))
     }
 }
 
@@ -528,7 +689,7 @@ private struct FileModuleView: View {
             ScrollView {
                 FileGroupList(items: items, sort: fileSort, store: store)
             }
-            .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.panel))
+            .scrollSurfaceStyle()
         }
         .padding(18)
     }
@@ -618,7 +779,7 @@ private struct DuplicateFinderView: View {
                 }
                 .padding(14)
             }
-            .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.panel))
+            .scrollSurfaceStyle()
         }
         .padding(18)
     }
@@ -683,7 +844,7 @@ private struct DiskAnalysisView: View {
                 }
                 .padding(14)
             }
-            .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.panel))
+            .scrollSurfaceStyle()
         }
         .padding(18)
     }
@@ -827,7 +988,7 @@ private struct UpdatesView: View {
                 }
                 .padding(14)
             }
-            .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.panel))
+            .scrollSurfaceStyle()
         }
         .padding(18)
     }
@@ -1287,7 +1448,7 @@ private struct FileGroupList: View {
                                 Text(category.title(store.language))
                                     .font(.system(size: 12, weight: .semibold))
                                 Spacer()
-                                Text((groups[category] ?? []).reduce(0) { $0 + $1.size }.cleanerFileSize)
+                                Text("\((groups[category] ?? []).count) · \((groups[category] ?? []).reduce(0) { $0 + $1.size }.cleanerFileSize)")
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundStyle(.secondary)
                             }
@@ -1307,6 +1468,7 @@ private struct FileGroupList: View {
                         }
                     }
                     .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.inset))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppTheme.line.opacity(0.55), lineWidth: 1))
                 }
             }
@@ -1352,6 +1514,9 @@ private struct FileTableHeader: View {
         .font(.system(size: 11, weight: .semibold))
         .foregroundStyle(.secondary)
         .padding(.horizontal, 12)
+        .frame(height: 28)
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.controlFill.opacity(0.38)))
+        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(AppTheme.line.opacity(0.35), lineWidth: 1))
     }
 }
 
@@ -1360,11 +1525,13 @@ private struct FileRow: View {
     @ObservedObject var store: CleanerStore
 
     var body: some View {
+        let isSelected = store.selectedFileIDs.contains(item.id)
+
         HStack(spacing: 10) {
             Button {
                 store.toggleSelection(for: item)
             } label: {
-                Image(systemName: store.selectedFileIDs.contains(item.id) ? "checkmark.square.fill" : "square")
+                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(item.isRemovable ? AppTheme.primary : .secondary)
             }
@@ -1427,7 +1594,19 @@ private struct FileRow: View {
             .help(store.localizer("open.finder"))
         }
         .padding(.horizontal, 12)
-        .frame(minHeight: 48)
+        .frame(minHeight: 50)
+        .background(rowBackground(isSelected: isSelected))
+        .opacity(item.isRemovable ? 1 : 0.72)
+    }
+
+    private func rowBackground(isSelected: Bool) -> Color {
+        if isSelected {
+            return AppTheme.primary.opacity(0.08)
+        }
+        if item.scope == .system {
+            return AppTheme.amber.opacity(0.055)
+        }
+        return Color.clear
     }
 }
 
@@ -1550,6 +1729,7 @@ private struct Chip: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(Capsule().fill(color.opacity(0.12)))
+        .overlay(Capsule().stroke(color.opacity(0.20), lineWidth: 1))
     }
 }
 
@@ -1570,7 +1750,7 @@ private struct MetricPill: View {
         }
         .padding(.horizontal, 12)
         .frame(height: 34)
-        .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.panel))
+        .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.elevatedPanel))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppTheme.line.opacity(0.55), lineWidth: 1))
     }
 }
@@ -1657,8 +1837,14 @@ private struct FlowLayout: Layout {
 private extension View {
     func panelStyle() -> some View {
         padding(14)
-            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.panel))
-            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(AppTheme.line.opacity(0.55), lineWidth: 1))
+            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.elevatedPanel))
+            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(AppTheme.line.opacity(0.50), lineWidth: 1))
+    }
+
+    func scrollSurfaceStyle() -> some View {
+        background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.elevatedPanel.opacity(0.78)))
+            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(AppTheme.line.opacity(0.42), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 

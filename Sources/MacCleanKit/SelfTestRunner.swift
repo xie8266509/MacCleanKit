@@ -64,7 +64,9 @@ enum SelfTestRunner {
             "move.trash",
             "confirm.message",
             "permission.onboarding.title",
-            "distribution.hint"
+            "distribution.hint",
+            "check.updates",
+            "update.available.title"
         ]
         for key in requiredLocalizationKeys where !Localizer.allKeys.contains(key) {
             failures.append("Missing localization key: \(key)")
@@ -89,6 +91,14 @@ enum SelfTestRunner {
 
         if !PathSafety.protectionReasons(for: home.appendingPathComponent("Downloads/example.zip")).isEmpty {
             failures.append("Path safety blocked a file inside a user folder instead of only the folder root.")
+        }
+
+        if !VersionComparator.isNewer("v0.1.10", than: "0.1.2") {
+            failures.append("Version comparator did not order v0.1.10 after 0.1.2.")
+        }
+
+        if VersionComparator.isNewer("0.1.2", than: "0.1.10") {
+            failures.append("Version comparator ordered 0.1.2 after 0.1.10.")
         }
 
         if failures.isEmpty {

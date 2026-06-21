@@ -8,8 +8,8 @@ BUNDLE_ID="${BUNDLE_ID:-com.local.maccleankit}"
 CODESIGN_IDENTITY="${CODESIGN_IDENTITY:--}"
 SPARKLE_FEED_URL="${SPARKLE_FEED_URL:-}"
 SPARKLE_PUBLIC_ED_KEY="${SPARKLE_PUBLIC_ED_KEY:-}"
-VERSION="${VERSION:-0.1.1}"
-BUILD="${BUILD:-2}"
+VERSION="${VERSION:-0.1.2}"
+BUILD="${BUILD:-3}"
 DIST_DIR="$ROOT_DIR/dist"
 APP_DIR="$DIST_DIR/$APP_NAME.app"
 CONTENTS_DIR="$APP_DIR/Contents"
@@ -50,6 +50,8 @@ cat > "$CONTENTS_DIR/Info.plist" <<PLIST
     <string>6.0</string>
     <key>CFBundleName</key>
     <string>$APP_NAME</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Author: Linux do @MIKE2026</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

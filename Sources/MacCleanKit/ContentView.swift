@@ -128,6 +128,12 @@ private struct SidebarView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                         Spacer(minLength: 0)
+                        if section == .updates, store.appUpdateInfo.status == .available {
+                            Circle()
+                                .fill(store.selectedSection == section ? Color.white.opacity(0.86) : AppTheme.primary)
+                                .frame(width: 7, height: 7)
+                                .help(store.localizer("update.available.title"))
+                        }
                     }
                     .foregroundStyle(store.selectedSection == section ? Color.white : AppTheme.label)
                     .padding(.horizontal, 10)
@@ -958,6 +964,7 @@ private struct UpdatesView: View {
     var body: some View {
         let l = store.localizer
         VStack(alignment: .leading, spacing: 14) {
+            AppUpdateCard(store: store)
             InfoBanner(icon: "arrow.triangle.2.circlepath", text: l("updates.warning"), color: AppTheme.accent)
 
             HStack {
@@ -991,6 +998,153 @@ private struct UpdatesView: View {
             .scrollSurfaceStyle()
         }
         .padding(18)
+    }
+}
+
+private struct AppUpdateCard: View {
+    @ObservedObject var store: CleanerStore
+
+    var body: some View {
+        let info = store.appUpdateInfo
+        let l = store.localizer
+        let color = statusColor(info.status)
+
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: statusIcon(info.status))
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: 30, height: 30)
+                    .background(Circle().fill(color.opacity(0.10)))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(statusTitle(info.status, l: l))
+                        .font(.system(size: 14, weight: .semibold))
+                    Text(statusBody(info, l: l))
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 12)
+
+                if info.status == .checking || store.isCheckingAppUpdate {
+                    ProgressView()
+                        .controlSize(.small)
+                }
+
+                Button {
+                    store.checkForAppUpdate(userInitiated: true)
+                } label: {
+                    Label(l("check.updates"), systemImage: "arrow.clockwise")
+                }
+                .controlSize(.small)
+                .disabled(store.isCheckingAppUpdate)
+
+                if info.status == .available {
+                    Button {
+                        store.openAppUpdateDownload()
+                    } label: {
+                        Label(l("download.update"), systemImage: "square.and.arrow.down")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                } else {
+                    Button {
+                        store.openAppUpdateRelease()
+                    } label: {
+                        Label(l("open.releases"), systemImage: "safari")
+                    }
+                    .controlSize(.small)
+                }
+            }
+
+            HStack(spacing: 10) {
+                VersionPill(title: l("current.version"), value: info.currentVersion, systemImage: "macwindow")
+                VersionPill(title: l("latest.version"), value: info.latestVersion ?? "-", systemImage: "tag")
+                if let checkedAt = info.checkedAt {
+                    VersionPill(title: l("last.checked"), value: DateFormatter.cleanerShort.string(from: checkedAt), systemImage: "clock")
+                }
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(14)
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.elevatedPanel))
+        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(color.opacity(0.22), lineWidth: 1))
+    }
+
+    private func statusColor(_ status: AppUpdateCheckStatus) -> Color {
+        switch status {
+        case .available: AppTheme.primary
+        case .current, .sparkleManaged: AppTheme.accent
+        case .failed: AppTheme.danger
+        case .checking: AppTheme.primary
+        case .idle: AppTheme.secondaryLabel
+        }
+    }
+
+    private func statusIcon(_ status: AppUpdateCheckStatus) -> String {
+        switch status {
+        case .available: "arrow.down.circle.fill"
+        case .current: "checkmark.circle.fill"
+        case .failed: "exclamationmark.triangle.fill"
+        case .checking: "arrow.triangle.2.circlepath"
+        case .sparkleManaged: "sparkles"
+        case .idle: "clock"
+        }
+    }
+
+    private func statusTitle(_ status: AppUpdateCheckStatus, l: Localizer) -> String {
+        switch status {
+        case .available: l("update.available.title")
+        case .current: l("update.current.title")
+        case .failed: l("update.failed.title")
+        case .checking: l("update.checking.title")
+        case .sparkleManaged: l("update.sparkle.title")
+        case .idle: l("update.idle.title")
+        }
+    }
+
+    private func statusBody(_ info: AppUpdateInfo, l: Localizer) -> String {
+        switch info.status {
+        case .available:
+            let latest = info.latestVersion ?? "-"
+            return "\(l("update.available.body")) \(latest)"
+        case .current:
+            return l("update.current.body")
+        case .failed:
+            return info.message ?? l("update.failed.body")
+        case .checking:
+            return l("update.checking.body")
+        case .sparkleManaged:
+            return l("update.sparkle.body")
+        case .idle:
+            return l("update.idle.body")
+        }
+    }
+}
+
+private struct VersionPill: View {
+    let title: String
+    let value: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemImage)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(AppTheme.primary)
+            Text(title)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.system(size: 11, weight: .semibold))
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 9)
+        .frame(height: 26)
+        .background(Capsule().fill(AppTheme.controlFill.opacity(0.35)))
+        .overlay(Capsule().stroke(AppTheme.line.opacity(0.35), lineWidth: 1))
     }
 }
 

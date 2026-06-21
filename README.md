@@ -6,6 +6,8 @@
 
 MacCleanKit 是一个 macOS 原生清理与应用管理工具原型，使用 SwiftUI 和 AppKit 构建。它面向需要复核应用残留、启动项、扩展、缓存、日志、重复文件和磁盘占用的用户，强调“先展示、再确认、只移到废纸篓”的安全工作流。
 
+作者：Linux do @MIKE2026
+
 当前版本支持中文 / English 双语切换，包含应用程序扫描、关联文件分析、启动项禁用与恢复、系统文件区分、权限与日志页面、重复文件扫描、磁盘分析、内存状态查看、本地打包、DMG 生成和发布检查脚本。
 
 > 注意：MacCleanKit 仍是 MVP / prototype，不是生产级清理数据库。请在移动文件到废纸篓前仔细复核路径和项目来源。
@@ -47,6 +49,7 @@ This project is not affiliated with Nektony and does not copy its branding or as
 - Duplicate finder for Desktop, Documents, and Downloads using file size plus SHA-256.
 - Memory pressure view with optional system `purge` call when available.
 - Local update overview using App Store receipts and app modification dates.
+- Automatic MacCleanKit update detection through GitHub Releases, with optional Sparkle support for signed appcast builds.
 - All destructive operations move files to Trash and require confirmation.
 - Permission status page for Full Disk Access troubleshooting.
 - First-run Full Disk Access onboarding.
@@ -120,7 +123,7 @@ This runs build/self-test, packages the app, verifies the `.app` can open a visi
 - Built-in rules improve matching for some common apps, but they are still review-first rules.
 - Custom rules can be added in `~/Library/Application Support/MacCleanKit/RemovalRules.json`; invalid or unsafe rules are ignored.
 - Permission chips come from declared `Info.plist` usage strings, not the protected TCC database.
-- The update view does not contact vendor servers. It only distinguishes App Store apps, recently modified apps, stale apps, and manual-check candidates.
+- MacCleanKit's own update card checks the public GitHub Releases API. The installed-app update list does not contact third-party vendor servers; it only distinguishes App Store apps, recently modified apps, stale apps, and manual-check candidates.
 - Sparkle auto-update is optional. It activates only when `SUFeedURL` and a public EdDSA key are supplied during packaging and the Sparkle framework is vendored/linked in a distribution build.
 - Moving active app caches or plugins can affect running apps. Quit related apps before cleaning.
 - Disk analysis is read-only.

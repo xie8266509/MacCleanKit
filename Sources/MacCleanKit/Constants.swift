@@ -2,7 +2,11 @@ import Foundation
 
 enum AppConstants {
     static let appName = "MacCleanKit"
+    static let author = "Linux do @MIKE2026"
     static let bundleIdentifier = "com.local.maccleankit"
+    static let fallbackAppVersion = "0.1.2"
+    static let githubLatestReleaseAPI = URL(string: "https://api.github.com/repos/xie8266509/MacCleanKit/releases/latest")!
+    static let githubReleasesURL = URL(string: "https://github.com/xie8266509/MacCleanKit/releases")!
 
     static var applicationSupportDirectory: URL {
         let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first

@@ -57,7 +57,7 @@ The included script generates an appcast XML template for the packaged zip:
 
 ```bash
 DOWNLOAD_URL="https://your-domain.example/MacCleanKit.app.zip" \
-VERSION="0.1.1" \
+VERSION="0.1.2" \
 Scripts/make-appcast-template.sh
 ```
 

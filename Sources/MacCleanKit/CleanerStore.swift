@@ -18,6 +18,8 @@ final class CleanerStore: ObservableObject {
     @Published var duplicateGroups: [DuplicateGroup] = []
     @Published var memoryStats: MemoryStats = .empty
     @Published var updateItems: [UpdateCandidate] = []
+    @Published var appUpdateInfo: AppUpdateInfo = .idle(currentVersion: UpdateCheckService.currentVersion())
+    @Published var isCheckingAppUpdate = false
     @Published var signatureReport: SignatureReport?
     @Published var permissionProbes: [PermissionProbe] = []
     @Published var operationLogs: [TrashOperationLog] = []
@@ -33,6 +35,7 @@ final class CleanerStore: ObservableObject {
     private var hasStarted = false
     private var scanTask: Task<Void, Never>?
     private var appSizeTask: Task<Void, Never>?
+    private var updateCheckTask: Task<Void, Never>?
     private let defaults = UserDefaults.standard
 
     var localizer: Localizer { Localizer(language: language) }
@@ -75,6 +78,7 @@ final class CleanerStore: ObservableObject {
         reloadStartupBackups()
         refreshMemory()
         refreshApplications()
+        checkForAppUpdate(userInitiated: false)
     }
 
     func selectSection(_ section: CleanerSection) {
@@ -94,6 +98,9 @@ final class CleanerStore: ObservableObject {
             refreshApplications()
         case .memory:
             refreshMemory()
+        case .updates:
+            scanSection(.updates, force: true)
+            checkForAppUpdate(userInitiated: true)
         case .permissions:
             refreshPermissionProbes()
             reloadOperationLogs()
@@ -462,6 +469,54 @@ final class CleanerStore: ObservableObject {
         if let url = URL(string: "macappstore://showUpdatesPage") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    func checkForAppUpdate(userInitiated: Bool) {
+        let currentVersion = UpdateCheckService.currentVersion()
+        if SparkleUpdateController.shared.isConfigured {
+            appUpdateInfo = .sparkleManaged(currentVersion: currentVersion)
+            if userInitiated {
+                SparkleUpdateController.shared.checkForUpdates()
+            } else {
+                SparkleUpdateController.shared.startIfConfigured()
+            }
+            return
+        }
+
+        updateCheckTask?.cancel()
+        isCheckingAppUpdate = true
+        appUpdateInfo = .checking(currentVersion: currentVersion)
+        if userInitiated {
+            statusMessageKey = "checking.update"
+            lastErrorMessage = nil
+        }
+
+        updateCheckTask = Task {
+            do {
+                let info = try await UpdateCheckService.checkLatestRelease(currentVersion: currentVersion)
+                guard !Task.isCancelled else { return }
+                appUpdateInfo = info
+                isCheckingAppUpdate = false
+                if userInitiated {
+                    statusMessageKey = info.status == .available ? "update.available" : "update.current"
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                appUpdateInfo = .failed(currentVersion: currentVersion, message: error.localizedDescription)
+                isCheckingAppUpdate = false
+                if userInitiated {
+                    lastErrorMessage = "\(localizer("update.check.failed")): \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+
+    func openAppUpdateDownload() {
+        NSWorkspace.shared.open(appUpdateInfo.downloadURL ?? appUpdateInfo.releaseURL ?? AppConstants.githubReleasesURL)
+    }
+
+    func openAppUpdateRelease() {
+        NSWorkspace.shared.open(appUpdateInfo.releaseURL ?? AppConstants.githubReleasesURL)
     }
 
     func selectableItemsForCurrentContext() -> [FileItem] {

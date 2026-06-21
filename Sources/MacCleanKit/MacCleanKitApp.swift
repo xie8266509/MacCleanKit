@@ -64,13 +64,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             options: [
                 .applicationName: "MacCleanKit",
                 .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "debug",
-                .credits: NSAttributedString(string: "Native macOS cleanup and app management prototype.")
+                .credits: NSAttributedString(string: "Author: \(AppConstants.author)\nNative macOS cleanup and app management prototype.")
             ]
         )
     }
 
     @objc private func checkForUpdates() {
-        SparkleUpdateController.shared.checkForUpdates()
+        if SparkleUpdateController.shared.isConfigured {
+            SparkleUpdateController.shared.checkForUpdates()
+        } else {
+            NSWorkspace.shared.open(AppConstants.githubReleasesURL)
+        }
     }
 
     private func configureMainMenu() {
@@ -88,7 +92,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let updateItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "")
         updateItem.target = self
-        updateItem.isEnabled = SparkleUpdateController.shared.isConfigured
         appMenu.addItem(updateItem)
 
         appMenu.addItem(.separator())

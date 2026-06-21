@@ -112,7 +112,7 @@ The script uses ad-hoc signing for local testing. For distribution, use Develope
 
 If a downloaded build shows macOS's "damaged and can't be opened" warning, it was not notarized. Testers can remove quarantine with `xattr -dr com.apple.quarantine /Applications/MacCleanKit.app`, but public releases should be Developer ID signed and notarized.
 
-See `docs/INSTALL.md` for user install steps and Gatekeeper troubleshooting.
+If you do not have an Apple Developer account, publish artifacts only as trusted test builds. See `docs/NO_DEVELOPER_ACCOUNT.md` and `docs/INSTALL.md`.
 
 ## Release Check
 

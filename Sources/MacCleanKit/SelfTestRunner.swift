@@ -69,7 +69,8 @@ enum SelfTestRunner {
             "update.available.title",
             "distribution.status",
             "signing",
-            "quarantine.clear"
+            "quarantine.clear",
+            "distribution.hint"
         ]
         for key in requiredLocalizationKeys where !Localizer.allKeys.contains(key) {
             failures.append("Missing localization key: \(key)")

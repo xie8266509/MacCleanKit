@@ -11,6 +11,23 @@ Public builds should be distributed as a Developer ID signed, notarized, and sta
 
 If macOS reports that the app is damaged, the downloaded build was not notarized for public distribution. Use a notarized release build instead.
 
+## Current Test Build Install
+
+If the project is distributed without an Apple Developer account, GitHub artifacts are test builds. After opening the DMG, read `README-FIRST.txt`.
+
+For trusted test builds:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/MacCleanKit.app
+open /Applications/MacCleanKit.app
+```
+
+Repository helper:
+
+```bash
+Scripts/install-test-build.sh /Volumes/MacCleanKit/MacCleanKit.app
+```
+
 ## Trusted Test Build Workaround
 
 Only use this for a test build from a trusted source:

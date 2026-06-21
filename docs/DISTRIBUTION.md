@@ -6,6 +6,7 @@ MacCleanKit can be built locally with ad-hoc signing, or prepared for external d
 
 ```bash
 Scripts/package-app.sh
+Scripts/package-dmg.sh
 ```
 
 This writes:
@@ -16,6 +17,14 @@ dist/MacCleanKit.app.zip
 ```
 
 By default `CODESIGN_IDENTITY` is `-`, which means ad-hoc signing.
+
+Without an Apple Developer account, this is the only distributable artifact this repository can produce. It should be labeled as a trusted test build. The DMG includes `README-FIRST.txt` with Gatekeeper instructions. See `docs/NO_DEVELOPER_ACCOUNT.md`.
+
+For local trusted testing:
+
+```bash
+Scripts/install-test-build.sh dist/MacCleanKit.app
+```
 
 ## Developer ID Build
 

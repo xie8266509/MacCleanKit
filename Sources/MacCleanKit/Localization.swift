@@ -149,7 +149,7 @@ struct Localizer {
         "permission.note": ("权限 chips 来自应用 Info.plist 的用途声明，不代表当前 TCC 授权状态。", "Permission chips come from Info.plist usage descriptions and do not reflect current TCC grants."),
         "safe.mode": ("所有删除操作都会进入废纸篓，并保留 Finder 复核路径。", "All destructive actions move items to Trash and keep Finder review available."),
         "full.disk.access.hint": ("如果 Mail、Safari、浏览器数据或用户 Library 显示受限，请在系统设置里为 MacCleanKit 开启完全磁盘访问。", "If Mail, Safari, browser data, or the user Library is limited, grant Full Disk Access to MacCleanKit in System Settings."),
-        "distribution.hint": ("本地包已支持运行时签名选项。Developer ID 签名、公证和 Sparkle appcast 需要真实证书与 notarytool profile。", "Local packaging supports hardened runtime signing options. Developer ID signing, notarization, and Sparkle appcasts require a real certificate and notarytool profile."),
+        "distribution.hint": ("没有 Apple Developer 账号时只能作为可信测试版分发；浏览器下载后可能需要移除 quarantine。正式公开分发需要 Developer ID 签名和公证。", "Without an Apple Developer account, distribute only trusted test builds; browser downloads may require quarantine removal. Public distribution requires Developer ID signing and notarization."),
         "permission.onboarding.title": ("开启完全磁盘访问", "Enable Full Disk Access"),
         "permission.onboarding.body": ("MacCleanKit 需要读取用户 Library、浏览器和 Mail 数据才能完整显示可清理项目。没有权限时仍可使用基础扫描，但结果会不完整。", "MacCleanKit needs access to the user Library, browser data, and Mail data to show complete cleanup results. Basic scanning still works without it, but results will be incomplete."),
         "skip": ("跳过", "Skip"),

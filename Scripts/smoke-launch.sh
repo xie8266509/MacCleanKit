@@ -16,6 +16,8 @@ cleanup() {
 trap cleanup EXIT
 
 cleanup
+"$EXECUTABLE" --self-test
+
 rm -f "$CAPTURE_PATH"
 "$EXECUTABLE" --capture-ui "$CAPTURE_PATH"
 
@@ -33,6 +35,11 @@ fi
 
 open -n "$APP_PATH"
 sleep "${SMOKE_LAUNCH_DELAY:-4}"
+
+if ! pgrep -f "$EXECUTABLE" >/dev/null; then
+  echo "Launch smoke test failed: MacCleanKit exited during startup." >&2
+  exit 1
+fi
 
 swift - <<'SWIFT'
 import CoreGraphics

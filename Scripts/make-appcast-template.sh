@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ZIP="$ROOT_DIR/dist/MacCleanKit.app.zip"
 OUT="$ROOT_DIR/dist/appcast-template.xml"
-VERSION="${VERSION:-0.1.0}"
-BUILD="${BUILD:-1}"
+VERSION="${VERSION:-0.1.1}"
+BUILD="${BUILD:-2}"
 DOWNLOAD_URL="${DOWNLOAD_URL:-https://example.com/MacCleanKit.app.zip}"
 SPARKLE_SIGNATURE="${SPARKLE_SIGNATURE:-}"
 

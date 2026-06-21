@@ -4,7 +4,11 @@ enum SelfTestRunner {
     static func run() -> Int32 {
         var failures: [String] = []
 
-        let rules = RuleStore.loadRules()
+        if RuleStore.bundledRulesURL == nil {
+            failures.append("Bundled removal rules file was not found.")
+        }
+
+        let rules = RuleStore.loadRules(refresh: true)
         if rules.isEmpty {
             failures.append("Bundled removal rules did not load.")
         }

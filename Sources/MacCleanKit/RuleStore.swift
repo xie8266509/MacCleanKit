@@ -12,10 +12,7 @@ enum RuleStore {
         }
         cacheLock.unlock()
 
-        let urls = [
-            Bundle.module.url(forResource: "RemovalRules", withExtension: "json"),
-            userRulesURL
-        ].compactMap { $0 }
+        let urls = [bundledRulesURL, userRulesURL].compactMap { $0 }
 
         let rules = urls.flatMap(loadRules)
         let validRules = rules.filter { RuleValidator.validate($0).isEmpty }
@@ -39,6 +36,10 @@ enum RuleStore {
 
     static var userRulesURL: URL {
         AppConstants.applicationSupportDirectory.appendingPathComponent("RemovalRules.json")
+    }
+
+    static var bundledRulesURL: URL? {
+        ResourceLocator.url(forResource: "RemovalRules", withExtension: "json")
     }
 
     private static func loadRules(from url: URL) -> [RemovalRule] {

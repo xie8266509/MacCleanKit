@@ -1067,6 +1067,8 @@ private struct AppUpdateCard: View {
                 }
                 Spacer(minLength: 0)
             }
+
+            DistributionStatusStrip(status: store.distributionStatus, language: store.language)
         }
         .padding(14)
         .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(AppTheme.elevatedPanel))
@@ -1121,6 +1123,55 @@ private struct AppUpdateCard: View {
         case .idle:
             return l("update.idle.body")
         }
+    }
+}
+
+private struct DistributionStatusStrip: View {
+    let status: DistributionStatus
+    let language: AppLanguage
+
+    var body: some View {
+        let l = Localizer(language: language)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "checkmark.seal")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(statusColor)
+                Text(l("distribution.status"))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+
+            HStack(spacing: 8) {
+                VersionPill(
+                    title: l("signing"),
+                    value: status.signingStatus.title(language),
+                    systemImage: status.signingStatus == .developerID ? "checkmark.seal" : "signature"
+                )
+                VersionPill(
+                    title: "Gatekeeper",
+                    value: status.isGatekeeperAccepted ? l("accepted") : l("rejected"),
+                    systemImage: status.isGatekeeperAccepted ? "checkmark.circle" : "exclamationmark.triangle"
+                )
+                VersionPill(
+                    title: "Quarantine",
+                    value: status.isQuarantined ? l("present") : l("quarantine.clear"),
+                    systemImage: status.isQuarantined ? "lock" : "lock.open"
+                )
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    private var statusColor: Color {
+        if status.signingStatus == .developerID, status.isGatekeeperAccepted, !status.isQuarantined {
+            return AppTheme.accent
+        }
+        if status.isQuarantined || !status.isGatekeeperAccepted {
+            return AppTheme.amber
+        }
+        return AppTheme.secondaryLabel
     }
 }
 
@@ -1309,11 +1360,27 @@ private struct PermissionsAndLogsView: View {
                 HStack(alignment: .top, spacing: 12) {
                     MetricCard(title: l("rules"), value: "\(RuleStore.loadRules().count)", systemImage: "list.bullet.clipboard")
                     VStack(alignment: .leading, spacing: 8) {
-                        SectionCaption(title: l("distribution"), systemImage: "shippingbox")
+                        HStack {
+                            SectionCaption(title: l("distribution"), systemImage: "shippingbox")
+                            Spacer()
+                            Button {
+                                store.refreshDistributionStatus()
+                            } label: {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                            .buttonStyle(.borderless)
+                            .help(l("refresh.permissions"))
+                        }
+                        DistributionStatusStrip(status: store.distributionStatus, language: store.language)
                         Text(l("distribution.hint"))
                             .font(.system(size: 12))
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
+                        Text(store.distributionStatus.appPath)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
                     }
                     .panelStyle()
                 }

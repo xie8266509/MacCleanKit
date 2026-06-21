@@ -1,6 +1,6 @@
 import Foundation
 
-enum AppUpdateCheckStatus: String, Sendable {
+enum AppUpdateCheckStatus: String, Codable, Sendable {
     case idle
     case checking
     case current
@@ -9,7 +9,7 @@ enum AppUpdateCheckStatus: String, Sendable {
     case sparkleManaged
 }
 
-struct AppUpdateInfo: Equatable, Sendable {
+struct AppUpdateInfo: Codable, Equatable, Sendable {
     let status: AppUpdateCheckStatus
     let currentVersion: String
     let latestVersion: String?

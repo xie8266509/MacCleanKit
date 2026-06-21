@@ -20,6 +20,7 @@ final class CleanerStore: ObservableObject {
     @Published var updateItems: [UpdateCandidate] = []
     @Published var appUpdateInfo: AppUpdateInfo = .idle(currentVersion: UpdateCheckService.currentVersion())
     @Published var isCheckingAppUpdate = false
+    @Published var distributionStatus: DistributionStatus = .unknown
     @Published var signatureReport: SignatureReport?
     @Published var permissionProbes: [PermissionProbe] = []
     @Published var operationLogs: [TrashOperationLog] = []
@@ -76,6 +77,7 @@ final class CleanerStore: ObservableObject {
         }
         reloadOperationLogs()
         reloadStartupBackups()
+        refreshDistributionStatus()
         refreshMemory()
         refreshApplications()
         checkForAppUpdate(userInitiated: false)
@@ -100,11 +102,13 @@ final class CleanerStore: ObservableObject {
             refreshMemory()
         case .updates:
             scanSection(.updates, force: true)
+            refreshDistributionStatus()
             checkForAppUpdate(userInitiated: true)
         case .permissions:
             refreshPermissionProbes()
             reloadOperationLogs()
             reloadStartupBackups()
+            refreshDistributionStatus()
         default:
             scanSection(selectedSection, force: true)
         }
@@ -298,6 +302,10 @@ final class CleanerStore: ObservableObject {
         statusMessageKey = "last.message.ready"
     }
 
+    func refreshDistributionStatus() {
+        distributionStatus = DistributionStatusService.inspectCurrentApp()
+    }
+
     func openFullDiskAccessSettings() {
         PermissionService.openFullDiskAccessSettings()
     }
@@ -319,6 +327,8 @@ final class CleanerStore: ObservableObject {
                 startupBackups: startupBackups,
                 lastErrorMessage: lastErrorMessage,
                 scanStatus: statusMessage,
+                distributionStatus: distributionStatus,
+                appUpdateInfo: appUpdateInfo,
                 counts: [
                     "apps": apps.count,
                     "associatedFiles": associatedFiles.count,

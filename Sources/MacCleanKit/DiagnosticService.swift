@@ -8,12 +8,20 @@ enum DiagnosticService {
         startupBackups: [StartupBackup],
         lastErrorMessage: String?,
         scanStatus: String,
+        distributionStatus: DistributionStatus,
+        appUpdateInfo: AppUpdateInfo,
         counts: [String: Int]
     ) throws -> URL {
+        let bundle = Bundle.main
         let report = DiagnosticReport(
             appName: AppConstants.appName,
             generatedAt: Date(),
-            appVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "debug",
+            appVersion: bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "debug",
+            appBuild: bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-",
+            bundleIdentifier: bundle.bundleIdentifier ?? AppConstants.bundleIdentifier,
+            macOSVersion: ProcessInfo.processInfo.operatingSystemVersionString,
+            distributionStatus: distributionStatus,
+            appUpdateInfo: appUpdateInfo,
             permissionProbes: permissionProbes.map {
                 DiagnosticPermissionProbe(
                     title: $0.title,

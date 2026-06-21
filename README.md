@@ -50,6 +50,7 @@ This project is not affiliated with Nektony and does not copy its branding or as
 - Memory pressure view with optional system `purge` call when available.
 - Local update overview using App Store receipts and app modification dates.
 - Automatic MacCleanKit update detection through GitHub Releases, with optional Sparkle support for signed appcast builds.
+- Distribution status checks for signing, Gatekeeper, and quarantine.
 - All destructive operations move files to Trash and require confirmation.
 - Permission status page for Full Disk Access troubleshooting.
 - First-run Full Disk Access onboarding.
@@ -64,8 +65,9 @@ This project is not affiliated with Nektony and does not copy its branding or as
 - Duplicate auto-selection policies for keep newest, keep shortest path, and keep dominant folder.
 - Duplicate scan pipeline: size grouping, sample hash, then full SHA-256.
 - Browser extension manifest parsing for clearer names and versions where available.
+- Expanded built-in removal rules for common developer, browser, and productivity apps.
 - Single-source Chinese / English localization table in code to avoid launch-time bundle lookup stalls.
-- Imagegen-based app icon source, `.icns` generation, DMG packaging, Developer ID notarization, and Sparkle appcast scaffolding scripts.
+- Imagegen-based app icon source, `.icns` generation, DMG packaging, Developer ID notarization, notarized DMG, release automation, and Sparkle appcast scaffolding scripts.
 - Launch smoke test for packaged `.app` window visibility and internal UI screenshot export.
 - User-extendable rule file at `~/Library/Application Support/MacCleanKit/RemovalRules.json`.
 
@@ -109,6 +111,8 @@ dist/MacCleanKit.dmg
 The script uses ad-hoc signing for local testing. For distribution, use Developer ID signing and Apple notarization. See `docs/DISTRIBUTION.md`.
 
 If a downloaded build shows macOS's "damaged and can't be opened" warning, it was not notarized. Testers can remove quarantine with `xattr -dr com.apple.quarantine /Applications/MacCleanKit.app`, but public releases should be Developer ID signed and notarized.
+
+See `docs/INSTALL.md` for user install steps and Gatekeeper troubleshooting.
 
 ## Release Check
 

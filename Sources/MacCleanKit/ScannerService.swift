@@ -937,6 +937,7 @@ private extension ScannerService {
 
         var hasher = SHA256()
         while true {
+            if Task.isCancelled { return nil }
             do {
                 guard let data = try handle.read(upToCount: 1024 * 1024), !data.isEmpty else { break }
                 hasher.update(data: data)
@@ -954,9 +955,11 @@ private extension ScannerService {
 
         var hasher = SHA256()
         do {
+            if Task.isCancelled { return nil }
             if let head = try handle.read(upToCount: 64 * 1024) {
                 hasher.update(data: head)
             }
+            if Task.isCancelled { return nil }
             if size > 128 * 1024 {
                 try handle.seek(toOffset: UInt64(max(0, size - 64 * 1024)))
                 if let tail = try handle.read(upToCount: 64 * 1024) {

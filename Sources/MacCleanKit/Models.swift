@@ -526,6 +526,54 @@ enum UpdateStatus: String, Sendable {
     }
 }
 
+enum DistributionSigningStatus: String, Codable, Sendable {
+    case developerID
+    case adHoc
+    case unsigned
+    case unknown
+
+    func title(_ language: AppLanguage) -> String {
+        switch (self, language) {
+        case (.developerID, .zh): "Developer ID"
+        case (.developerID, .en): "Developer ID"
+        case (.adHoc, .zh): "本地签名"
+        case (.adHoc, .en): "Ad-hoc"
+        case (.unsigned, .zh): "未签名"
+        case (.unsigned, .en): "Unsigned"
+        case (.unknown, .zh): "未知"
+        case (.unknown, .en): "Unknown"
+        }
+    }
+}
+
+struct DistributionStatus: Codable, Equatable, Sendable {
+    let appPath: String
+    let bundleIdentifier: String
+    let version: String
+    let build: String
+    let macOSVersion: String
+    let signingStatus: DistributionSigningStatus
+    let codesignSummary: String
+    let gatekeeperSummary: String
+    let isGatekeeperAccepted: Bool
+    let isQuarantined: Bool
+    let quarantineValue: String?
+
+    static let unknown = DistributionStatus(
+        appPath: "-",
+        bundleIdentifier: AppConstants.bundleIdentifier,
+        version: AppConstants.fallbackAppVersion,
+        build: "-",
+        macOSVersion: "-",
+        signingStatus: .unknown,
+        codesignSummary: "-",
+        gatekeeperSummary: "-",
+        isGatekeeperAccepted: false,
+        isQuarantined: false,
+        quarantineValue: nil
+    )
+}
+
 struct UpdateCandidate: Identifiable, Hashable, Sendable {
     let id: String
     let app: InstalledApp
@@ -603,6 +651,11 @@ struct DiagnosticReport: Codable, Sendable {
     let appName: String
     let generatedAt: Date
     let appVersion: String
+    let appBuild: String
+    let bundleIdentifier: String
+    let macOSVersion: String
+    let distributionStatus: DistributionStatus
+    let appUpdateInfo: AppUpdateInfo
     let permissionProbes: [DiagnosticPermissionProbe]
     let operationLogs: [TrashOperationLog]
     let startupBackups: [StartupBackup]

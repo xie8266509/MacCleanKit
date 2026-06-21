@@ -27,6 +27,18 @@ BUNDLE_ID="com.yourcompany.maccleankit" \
 Scripts/package-app.sh
 ```
 
+For a local one-command signed release after the notary profile exists:
+
+```bash
+VERSION="0.1.3" \
+BUILD="4" \
+CODESIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
+BUNDLE_ID="com.yourcompany.maccleankit" \
+NOTARY_PROFILE="maccleankit-notary" \
+DOWNLOAD_URL="https://github.com/xie8266509/MacCleanKit/releases/download/v0.1.3/MacCleanKit.app.zip" \
+Scripts/release-notarized.sh
+```
+
 ## Notarization
 
 Create a `notarytool` profile first:
@@ -71,6 +83,43 @@ xattr -dr com.apple.quarantine /Applications/MacCleanKit.app
 
 Do not use the quarantine workaround as the public distribution path. Public users should receive a Developer ID signed, notarized, stapled DMG.
 
+## GitHub Release Automation
+
+The `Release Notarized` workflow can build, sign, notarize, staple, package, and publish a release from GitHub Actions.
+
+Configure these repository secrets:
+
+```text
+MACOS_CERTIFICATE_BASE64        Base64-encoded Developer ID Application .p12
+MACOS_CERTIFICATE_PASSWORD      Password for the .p12 file
+MACOS_KEYCHAIN_PASSWORD         Temporary CI keychain password
+DEVELOPER_ID_APPLICATION        Developer ID Application: Your Name (TEAMID)
+APPLE_ID                        Apple ID email
+APPLE_TEAM_ID                   Apple Developer Team ID
+APPLE_APP_SPECIFIC_PASSWORD     App-specific password for notarytool
+SPARKLE_PUBLIC_ED_KEY           Optional Sparkle public EdDSA key
+```
+
+Optional repository variable:
+
+```text
+SPARKLE_FEED_URL                Optional appcast URL for Sparkle builds
+```
+
+To encode the certificate:
+
+```bash
+base64 -i DeveloperIDApplication.p12 | pbcopy
+```
+
+Run the workflow manually with `version`, `build`, `tag`, and `bundle_id`. The workflow uploads:
+
+```text
+MacCleanKit.dmg
+MacCleanKit.app.zip
+appcast-template.xml
+```
+
 ## Sparkle Appcast
 
 The app contains a Sparkle-compatible update controller behind `#if canImport(Sparkle)`. For offline local builds, Sparkle is not forced as a dependency. To enable real automatic updates in a distribution build:
@@ -84,7 +133,7 @@ The included script generates an appcast XML template for the packaged zip:
 
 ```bash
 DOWNLOAD_URL="https://your-domain.example/MacCleanKit.app.zip" \
-VERSION="0.1.2" \
+VERSION="0.1.3" \
 Scripts/make-appcast-template.sh
 ```
 

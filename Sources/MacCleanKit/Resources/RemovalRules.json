@@ -64,5 +64,60 @@
       { "path": "~/Library/Caches/com.apple.dt.Xcode", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
       { "path": "~/Library/Preferences/com.apple.dt.Xcode.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
     ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.hnc.Discord",
+    "displayName": "Discord",
+    "paths": [
+      { "path": "~/Library/Application Support/discord", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Discord account state and local application data.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.hnc.Discord", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/HTTPStorages/com.hnc.Discord", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable HTTP storage cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.hnc.Discord.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "ru.keepcoder.Telegram",
+    "displayName": "Telegram",
+    "paths": [
+      { "path": "~/Library/Application Support/Telegram Desktop", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Telegram local state and downloaded media cache.", "defaultSelected": false },
+      { "path": "~/Library/Caches/ru.keepcoder.Telegram", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/ru.keepcoder.Telegram.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false },
+      { "path": "~/Library/Saved Application State/ru.keepcoder.Telegram.savedState", "category": "leftover", "recommended": true, "risk": "safe", "description": "Window restoration state.", "defaultSelected": true }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "notion.id",
+    "displayName": "Notion",
+    "paths": [
+      { "path": "~/Library/Application Support/Notion", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Notion workspace state and local data.", "defaultSelected": false },
+      { "path": "~/Library/Caches/notion.id", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/HTTPStorages/notion.id", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable HTTP storage cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/notion.id.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.figma.Desktop",
+    "displayName": "Figma",
+    "paths": [
+      { "path": "~/Library/Application Support/Figma", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Figma local state and offline data.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.figma.Desktop", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/HTTPStorages/com.figma.Desktop", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable HTTP storage cache.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.figma.Desktop.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "bundleIdentifier": "com.jetbrains.toolbox",
+    "displayName": "JetBrains Toolbox",
+    "paths": [
+      { "path": "~/Library/Application Support/JetBrains/Toolbox", "category": "applicationSupport", "recommended": false, "risk": "review", "description": "Toolbox settings and installed-tool metadata.", "defaultSelected": false },
+      { "path": "~/Library/Caches/com.jetbrains.toolbox", "category": "cache", "recommended": true, "risk": "safe", "description": "Regenerable app cache.", "defaultSelected": true },
+      { "path": "~/Library/Logs/JetBrains/Toolbox", "category": "logs", "recommended": true, "risk": "safe", "description": "Diagnostic logs.", "defaultSelected": true },
+      { "path": "~/Library/Preferences/com.jetbrains.toolbox.plist", "category": "preferences", "recommended": false, "risk": "review", "description": "Application preferences.", "defaultSelected": false }
+    ]
   }
 ]

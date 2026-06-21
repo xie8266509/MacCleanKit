@@ -44,6 +44,33 @@ Then submit and staple:
 NOTARY_PROFILE="maccleankit-notary" Scripts/notarize-app.sh
 ```
 
+For a public DMG release, notarize the app first, rebuild the DMG from the stapled app, then notarize and staple the DMG:
+
+```bash
+CODESIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
+BUNDLE_ID="com.yourcompany.maccleankit" \
+Scripts/package-app.sh
+
+NOTARY_PROFILE="maccleankit-notary" Scripts/notarize-app.sh
+Scripts/package-dmg.sh
+NOTARY_PROFILE="maccleankit-notary" Scripts/notarize-dmg.sh
+```
+
+Verify the final artifacts:
+
+```bash
+spctl -a -vv -t execute dist/MacCleanKit.app
+spctl -a -vv -t open --context context:primary-signature dist/MacCleanKit.dmg
+```
+
+If macOS says the app is damaged after a browser download, the build was not notarized for public distribution. For trusted test builds only, remove the quarantine flag after copying the app to `/Applications`:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/MacCleanKit.app
+```
+
+Do not use the quarantine workaround as the public distribution path. Public users should receive a Developer ID signed, notarized, stapled DMG.
+
 ## Sparkle Appcast
 
 The app contains a Sparkle-compatible update controller behind `#if canImport(Sparkle)`. For offline local builds, Sparkle is not forced as a dependency. To enable real automatic updates in a distribution build:

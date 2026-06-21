@@ -108,6 +108,8 @@ dist/MacCleanKit.dmg
 
 The script uses ad-hoc signing for local testing. For distribution, use Developer ID signing and Apple notarization. See `docs/DISTRIBUTION.md`.
 
+If a downloaded build shows macOS's "damaged and can't be opened" warning, it was not notarized. Testers can remove quarantine with `xattr -dr com.apple.quarantine /Applications/MacCleanKit.app`, but public releases should be Developer ID signed and notarized.
+
 ## Release Check
 
 ```bash
